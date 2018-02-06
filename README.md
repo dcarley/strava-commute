@@ -15,3 +15,22 @@ differences are that I wanted to try out:
 [lambda-strava-commute-namer]: https://github.com/alexmuller/lambda-strava-commute-namer
 [lambda-go]: https://aws.amazon.com/blogs/compute/announcing-go-support-for-aws-lambda/
 [strava-webhook]: http://strava.github.io/api/partner/v3/events/
+
+## Usage
+
+### Prerequisites
+
+1. Install [Terraform](https://www.terraform.io/).
+1. Export your `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
+1. Create an S3 bucket to store state and initialise Terraform:
+
+        make init BUCKET_SUFFIX=<your_suffix>
+
+### Deployment
+
+1. Export your Strava API token as `STRAVA_API_TOKEN`.
+1. Build, package, and deploy:
+
+        make
+
+1. Take the `url` in the output.
