@@ -10,7 +10,7 @@ build: dist
 
 .PHONY: package
 package: dist
-	cd dist && zip strava-commute.zip strava-commute
+	cd dist && zip strava-commute.zip strava-commute config.json
 
 .PHONY: clean
 clean:

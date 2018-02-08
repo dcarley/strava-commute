@@ -13,6 +13,7 @@ import (
 
 const (
 	TokenEnvVar = "STRAVA_API_TOKEN"
+	ConfigFile  = "config.json"
 )
 
 // http://strava.github.io/api/partner/v3/events/#updates
@@ -34,6 +35,14 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 		}, nil
 	}
 
+	config, err := LoadConfig(ConfigFile)
+	if err != nil {
+		return events.APIGatewayProxyResponse{
+			StatusCode: http.StatusServiceUnavailable,
+			Body:       err.Error(),
+		}, nil
+	}
+
 	if request.HTTPMethod != http.MethodPost {
 		return events.APIGatewayProxyResponse{
 			StatusCode: http.StatusMethodNotAllowed,
@@ -41,7 +50,7 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	}
 
 	var webhook WebhookRequest
-	err := json.Unmarshal([]byte(request.Body), &webhook)
+	err = json.Unmarshal([]byte(request.Body), &webhook)
 	if err != nil {
 		return events.APIGatewayProxyResponse{
 			StatusCode: http.StatusBadRequest,
@@ -59,9 +68,32 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 		}, nil
 	}
 
+	var startName, endName string
+	if name := config.GetLocation(activity.StartLocation); name != "" {
+		startName = fmt.Sprintf(" from %s", name)
+	}
+	if name := config.GetLocation(activity.EndLocation); name != "" {
+		endName = fmt.Sprintf(" to %s", name)
+	}
+	if startName == "" && endName == "" {
+		return events.APIGatewayProxyResponse{
+			StatusCode: http.StatusOK,
+			Body:       fmt.Sprintf("no need to rename %d", activity.Id),
+		}, nil
+	}
+
+	name := fmt.Sprintf("Commute%s%s", startName, endName)
+	_, err = service.Update(activity.Id).Name(name).Commute(true).Do()
+	if err != nil {
+		return events.APIGatewayProxyResponse{
+			StatusCode: http.StatusServiceUnavailable,
+			Body:       err.Error(),
+		}, nil
+	}
+
 	return events.APIGatewayProxyResponse{
 		StatusCode: http.StatusOK,
-		Body:       activity.Name,
+		Body:       fmt.Sprintf("renamed %d to: %s", activity.Id, name),
 	}, nil
 }
 

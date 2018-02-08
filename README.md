@@ -26,6 +26,31 @@ differences are that I wanted to try out:
 
         make init BUCKET_SUFFIX=<your_suffix>
 
+### Config
+
+Write a config file to `dist/config.json` in the following format:
+
+    {
+      "locations": {
+        "London": {
+          "min": [-0.510375, 51.286758],
+          "max": [0.334015, 51.691875]
+        },
+        "Sheffield": {
+          "min": [-1.801472, 53.304512],
+          "max": [-1.324669, 53.503128]
+        }
+      }
+    }
+
+Notes about the format:
+
+- The name of each location will be append to activities that have a
+    matching start and/or end location. You can use a [bounding box
+    utility][] to generate the longitude and latitude co-ordinates.
+
+[bounding box utility]: http://boundingbox.klokantech.com/
+
 ### Deployment
 
 1. Export your Strava API token as `STRAVA_API_TOKEN`.
