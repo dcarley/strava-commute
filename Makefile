@@ -22,7 +22,9 @@ default_region:
 
 .PHONY: terraform
 terraform: default_region
-	cd terraform && terraform apply
+	$(if ${STRAVA_API_TOKEN},,$(error must set STRAVA_API_TOKEN))
+	cd terraform && terraform apply \
+		-var "strava_api_token=${STRAVA_API_TOKEN}"
 
 .PHONY: init
 init: default_region

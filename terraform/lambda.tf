@@ -25,4 +25,10 @@ resource "aws_lambda_function" "lambda" {
   source_code_hash = "${base64sha256(file("../dist/${var.name}.zip"))}"
   runtime          = "go1.x"
   handler          = "${var.name}"
+
+  environment {
+    variables = {
+      STRAVA_API_TOKEN = "${var.strava_api_token}"
+    }
+  }
 }

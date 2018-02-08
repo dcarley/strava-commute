@@ -2,10 +2,17 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
+	strava "github.com/strava/go.strava"
+)
+
+const (
+	TokenEnvVar = "STRAVA_API_TOKEN"
 )
 
 // http://strava.github.io/api/partner/v3/events/#updates
@@ -19,6 +26,14 @@ type WebhookRequest struct {
 }
 
 func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+	token := os.Getenv(TokenEnvVar)
+	if token == "" {
+		return events.APIGatewayProxyResponse{
+			StatusCode: http.StatusServiceUnavailable,
+			Body:       fmt.Sprintf("%s environment variable not set", TokenEnvVar),
+		}, nil
+	}
+
 	if request.HTTPMethod != http.MethodPost {
 		return events.APIGatewayProxyResponse{
 			StatusCode: http.StatusMethodNotAllowed,
@@ -34,8 +49,19 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 		}, nil
 	}
 
+	client := NewClient(token)
+	service := strava.NewActivitiesService(client)
+	activity, err := service.Get(webhook.ObjectID).Do()
+	if err != nil {
+		return events.APIGatewayProxyResponse{
+			StatusCode: http.StatusServiceUnavailable,
+			Body:       err.Error(),
+		}, nil
+	}
+
 	return events.APIGatewayProxyResponse{
 		StatusCode: http.StatusOK,
+		Body:       activity.Name,
 	}, nil
 }
 
