@@ -28,9 +28,19 @@ var _ = Describe("Main", func() {
 			Expect(err).ToNot(HaveOccurred(), "error should be nil for API Gateway to send response")
 			Expect(resp).To(Equal(expected))
 		},
+		Entry("invalid request method",
+			events.APIGatewayProxyRequest{
+				HTTPMethod: "GET",
+			},
+			events.APIGatewayProxyResponse{
+				StatusCode: http.StatusMethodNotAllowed,
+				Body:       ``,
+			},
+		),
 		Entry("empty request body",
 			events.APIGatewayProxyRequest{
-				Body: ``,
+				HTTPMethod: "POST",
+				Body:       ``,
 			},
 			events.APIGatewayProxyResponse{
 				StatusCode: http.StatusBadRequest,
@@ -39,7 +49,8 @@ var _ = Describe("Main", func() {
 		),
 		Entry("invalid request body",
 			events.APIGatewayProxyRequest{
-				Body: `{"key": valyou}`,
+				HTTPMethod: "POST",
+				Body:       `{"key": valyou}`,
 			},
 			events.APIGatewayProxyResponse{
 				StatusCode: http.StatusBadRequest,
@@ -48,7 +59,8 @@ var _ = Describe("Main", func() {
 		),
 		Entry("valid request body",
 			events.APIGatewayProxyRequest{
-				Body: exampleBody,
+				HTTPMethod: "POST",
+				Body:       exampleBody,
 			},
 			events.APIGatewayProxyResponse{
 				StatusCode: http.StatusOK,

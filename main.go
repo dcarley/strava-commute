@@ -19,6 +19,12 @@ type WebhookRequest struct {
 }
 
 func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+	if request.HTTPMethod != http.MethodPost {
+		return events.APIGatewayProxyResponse{
+			StatusCode: http.StatusMethodNotAllowed,
+		}, nil
+	}
+
 	var webhook WebhookRequest
 	err := json.Unmarshal([]byte(request.Body), &webhook)
 	if err != nil {
