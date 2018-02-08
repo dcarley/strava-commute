@@ -20,6 +20,7 @@ func (b BoundingBox) Within(position strava.Location) bool {
 }
 
 type Config struct {
+	GearID    string                 `json:"gear_id,omitempty"`
 	Locations map[string]BoundingBox `json:"locations"`
 }
 

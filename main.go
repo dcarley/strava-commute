@@ -83,7 +83,11 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	}
 
 	name := fmt.Sprintf("Commute%s%s", startName, endName)
-	_, err = service.Update(activity.Id).Name(name).Commute(true).Do()
+	update := service.Update(activity.Id).Name(name).Commute(true)
+	if id := config.GearID; id != "" {
+		update.Gear(id)
+	}
+	_, err = update.Do()
 	if err != nil {
 		return events.APIGatewayProxyResponse{
 			StatusCode: http.StatusServiceUnavailable,

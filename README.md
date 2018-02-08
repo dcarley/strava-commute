@@ -31,6 +31,7 @@ differences are that I wanted to try out:
 Write a config file to `dist/config.json` in the following format:
 
     {
+      "gear_id": "12345",
       "locations": {
         "London": {
           "min": [-0.510375, 51.286758],
@@ -48,6 +49,9 @@ Notes about the format:
 - The name of each location will be append to activities that have a
     matching start and/or end location. You can use a [bounding box
     utility][] to generate the longitude and latitude co-ordinates.
+- The `gear_id` is optional. If present all activities with matching
+    locations will be tagged with it. You can get the ID from the URL when
+    looking at your bike/shoes on Strava.
 
 [bounding box utility]: http://boundingbox.klokantech.com/
 

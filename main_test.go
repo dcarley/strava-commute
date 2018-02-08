@@ -35,6 +35,15 @@ func (m MockTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 var _ = Describe("Main", func() {
 	const (
 		errorDescription = "error should be nil for API Gateway to send response"
+		activityID       = 12312312312
+		eventTemplate    = `{
+				"subscription_id": "1",
+				"owner_id": 13408,
+				"object_id": %d,
+				"object_type": "activity",
+				"aspect_type": "create",
+				"events_time": 1297286541
+			}`
 	)
 
 	var (
@@ -179,18 +188,6 @@ var _ = Describe("Main", func() {
 	})
 
 	Describe("location handling", func() {
-		const (
-			activityID    = 12312312312
-			eventTemplate = `{
-				"subscription_id": "1",
-				"owner_id": 13408,
-				"object_id": %d,
-				"object_type": "activity",
-				"aspect_type": "create",
-				"events_time": 1297286541
-			}`
-		)
-
 		BeforeEach(func() {
 			config := []byte(`{
 				"locations": {
@@ -286,5 +283,64 @@ var _ = Describe("Main", func() {
 				"Commute from London to Sheffield",
 			),
 		)
+	})
+
+	Describe("gear ID in config", func() {
+		const (
+			name           = "Commute from simple"
+			gearID         = "12345"
+			configTemplate = `{
+				"gear_id": "%s",
+				"locations": {
+					"simple": {
+						"min": [0, 0],
+						"max": [1, 1]
+					}
+				}
+			}`
+		)
+
+		BeforeEach(func() {
+			config := []byte(fmt.Sprintf(configTemplate, gearID))
+			Expect(ioutil.WriteFile(configFile, config, 0644)).To(Succeed())
+
+			server.AppendHandlers(
+				ghttp.CombineHandlers(
+					ghttp.VerifyRequest("GET", fmt.Sprintf("/api/v3/activities/%d", activityID)),
+					ghttp.RespondWithJSONEncoded(http.StatusOK, strava.ActivityDetailed{
+						ActivitySummary: strava.ActivitySummary{
+							Id:            activityID,
+							Name:          "Morning Ride",
+							StartLocation: strava.Location{0.5, 0.5},
+							EndLocation:   strava.Location{25, 25},
+						},
+					}),
+				),
+				ghttp.CombineHandlers(
+					ghttp.VerifyRequest("PUT",
+						fmt.Sprintf("/api/v3/activities/%d", activityID),
+						fmt.Sprintf("name=%s&commute=true&gear_id=%s", name, gearID),
+					),
+					ghttp.RespondWith(http.StatusOK, `{}`),
+				),
+			)
+		})
+
+		AfterEach(func() {
+			Expect(server.ReceivedRequests()).To(HaveLen(2))
+		})
+
+		It("should set gear ID for matching activity", func() {
+			resp, err := Handler(events.APIGatewayProxyRequest{
+				HTTPMethod: "POST",
+				Body:       fmt.Sprintf(eventTemplate, activityID),
+			})
+
+			Expect(err).ToNot(HaveOccurred(), errorDescription)
+			Expect(resp).To(Equal(events.APIGatewayProxyResponse{
+				StatusCode: http.StatusOK,
+				Body:       fmt.Sprintf("renamed %d to: %s", activityID, name),
+			}))
+		})
 	})
 })
