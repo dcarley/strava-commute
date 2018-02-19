@@ -11,6 +11,8 @@ import (
 // response with the correct status code and body.
 func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	switch request.HTTPMethod {
+	case http.MethodGet:
+		return CallbackHandler(request), nil
 	case http.MethodPost:
 		return UpdateHandler(request), nil
 	}
