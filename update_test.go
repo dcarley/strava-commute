@@ -212,6 +212,7 @@ var _ = Describe("UpdateHandler", func() {
 					StatusCode: http.StatusOK,
 					Body:       fmt.Sprintf("no location matches for: %d\n", activityID),
 				}))
+				Expect(server.ReceivedRequests()).To(HaveLen(1))
 			})
 		})
 
@@ -318,6 +319,7 @@ var _ = Describe("UpdateHandler", func() {
 				StatusCode: http.StatusOK,
 				Body:       fmt.Sprintf("renamed %d to: %s\n", activityID, name),
 			}))
+			Expect(server.ReceivedRequests()).To(HaveLen(2))
 		})
 	})
 })
