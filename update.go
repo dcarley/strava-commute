@@ -30,7 +30,7 @@ func UpdateHandler(request events.APIGatewayProxyRequest) events.APIGatewayProxy
 	if token == "" {
 		return events.APIGatewayProxyResponse{
 			StatusCode: http.StatusServiceUnavailable,
-			Body:       fmt.Sprintf("%s environment variable not set", TokenEnvVar),
+			Body:       fmt.Sprintf("environment variable not set: %s\n", TokenEnvVar),
 		}
 	}
 
@@ -38,7 +38,7 @@ func UpdateHandler(request events.APIGatewayProxyRequest) events.APIGatewayProxy
 	if err != nil {
 		return events.APIGatewayProxyResponse{
 			StatusCode: http.StatusServiceUnavailable,
-			Body:       err.Error(),
+			Body:       fmt.Sprintf("%s\n", err),
 		}
 	}
 
@@ -47,7 +47,7 @@ func UpdateHandler(request events.APIGatewayProxyRequest) events.APIGatewayProxy
 	if err != nil {
 		return events.APIGatewayProxyResponse{
 			StatusCode: http.StatusBadRequest,
-			Body:       err.Error(),
+			Body:       fmt.Sprintf("%s\n", err),
 		}
 	}
 
@@ -57,7 +57,7 @@ func UpdateHandler(request events.APIGatewayProxyRequest) events.APIGatewayProxy
 	if err != nil {
 		return events.APIGatewayProxyResponse{
 			StatusCode: http.StatusServiceUnavailable,
-			Body:       err.Error(),
+			Body:       fmt.Sprintf("%s\n", err),
 		}
 	}
 
@@ -71,7 +71,7 @@ func UpdateHandler(request events.APIGatewayProxyRequest) events.APIGatewayProxy
 	if startName == "" && endName == "" {
 		return events.APIGatewayProxyResponse{
 			StatusCode: http.StatusOK,
-			Body:       fmt.Sprintf("no need to rename %d", activity.Id),
+			Body:       fmt.Sprintf("no location matches for: %d\n", activity.Id),
 		}
 	}
 
@@ -84,12 +84,12 @@ func UpdateHandler(request events.APIGatewayProxyRequest) events.APIGatewayProxy
 	if err != nil {
 		return events.APIGatewayProxyResponse{
 			StatusCode: http.StatusServiceUnavailable,
-			Body:       err.Error(),
+			Body:       fmt.Sprintf("%s\n", err),
 		}
 	}
 
 	return events.APIGatewayProxyResponse{
 		StatusCode: http.StatusOK,
-		Body:       fmt.Sprintf("renamed %d to: %s", activity.Id, name),
+		Body:       fmt.Sprintf("renamed %d to: %s\n", activity.Id, name),
 	}
 }

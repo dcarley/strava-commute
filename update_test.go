@@ -98,7 +98,7 @@ var _ = Describe("UpdateHandler", func() {
 				Body:       `{}`,
 			})).To(Equal(events.APIGatewayProxyResponse{
 				StatusCode: http.StatusServiceUnavailable,
-				Body:       `STRAVA_API_TOKEN environment variable not set`,
+				Body:       "environment variable not set: STRAVA_API_TOKEN\n",
 			}))
 		})
 	})
@@ -115,7 +115,7 @@ var _ = Describe("UpdateHandler", func() {
 					Body:       `{}`,
 				})).To(Equal(events.APIGatewayProxyResponse{
 					StatusCode: http.StatusServiceUnavailable,
-					Body:       `open config.json: no such file or directory`,
+					Body:       "open config.json: no such file or directory\n",
 				}))
 			})
 		})
@@ -134,7 +134,7 @@ var _ = Describe("UpdateHandler", func() {
 					Body:       `{}`,
 				})).To(Equal(events.APIGatewayProxyResponse{
 					StatusCode: http.StatusServiceUnavailable,
-					Body:       `config contains no locations`,
+					Body:       "config contains no locations\n",
 				}))
 			})
 		})
@@ -156,7 +156,7 @@ var _ = Describe("UpdateHandler", func() {
 				},
 				events.APIGatewayProxyResponse{
 					StatusCode: http.StatusBadRequest,
-					Body:       `unexpected end of JSON input`,
+					Body:       "unexpected end of JSON input\n",
 				},
 			),
 			Entry("invalid request body",
@@ -166,7 +166,7 @@ var _ = Describe("UpdateHandler", func() {
 				},
 				events.APIGatewayProxyResponse{
 					StatusCode: http.StatusBadRequest,
-					Body:       `invalid character 'v' looking for beginning of value`,
+					Body:       "invalid character 'v' looking for beginning of value\n",
 				},
 			),
 		)
@@ -210,7 +210,7 @@ var _ = Describe("UpdateHandler", func() {
 					Body:       fmt.Sprintf(eventTemplate, activityID),
 				})).To(Equal(events.APIGatewayProxyResponse{
 					StatusCode: http.StatusOK,
-					Body:       fmt.Sprintf("no need to rename %d", activityID),
+					Body:       fmt.Sprintf("no location matches for: %d\n", activityID),
 				}))
 			})
 		})
@@ -243,7 +243,7 @@ var _ = Describe("UpdateHandler", func() {
 					Body:       fmt.Sprintf(eventTemplate, activityID),
 				})).To(Equal(events.APIGatewayProxyResponse{
 					StatusCode: http.StatusOK,
-					Body:       fmt.Sprintf("renamed %d to: %s", activityID, name),
+					Body:       fmt.Sprintf("renamed %d to: %s\n", activityID, name),
 				}))
 				Expect(server.ReceivedRequests()).To(HaveLen(2))
 			},
@@ -316,7 +316,7 @@ var _ = Describe("UpdateHandler", func() {
 				Body:       fmt.Sprintf(eventTemplate, activityID),
 			})).To(Equal(events.APIGatewayProxyResponse{
 				StatusCode: http.StatusOK,
-				Body:       fmt.Sprintf("renamed %d to: %s", activityID, name),
+				Body:       fmt.Sprintf("renamed %d to: %s\n", activityID, name),
 			}))
 		})
 	})
