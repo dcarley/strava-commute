@@ -26,6 +26,28 @@ differences are that I wanted to try out:
 
         make init BUCKET_SUFFIX=<your_suffix>
 
+1. Create an API application from [your settings on Strava][] with a
+   callback domain of `localhost:8080`.
+
+[your settings on Strava]: https://www.strava.com/settings/api
+
+1. Create an API token that has `write` and `view_private` scopes for your
+   account using [dcarley/oauth2-cli][]:
+
+        oauth2-cli \
+          -scope write,view_private \
+          -id <your_client_id> \
+          -secret <your_client_secret> \
+          -auth https://www.strava.com/oauth/authorize \
+          -token https://www.strava.com/oauth/token
+
+[dcarley/oauth2-cli]: https://github.com/dcarley/oauth2-cli
+
+1. Email [developers@strava.com](mailto:developers@strava.com) to ask them
+   to enable webhook push subscriptions for your application. Include your
+   application client ID and a brief description of what your application
+   does.
+
 ### Config
 
 Write a config file to `dist/config.json` in the following format:
