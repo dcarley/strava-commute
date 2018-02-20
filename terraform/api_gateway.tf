@@ -32,6 +32,9 @@ resource "aws_api_gateway_deployment" "deployment" {
   stage_name  = "live"
   rest_api_id = "${aws_api_gateway_rest_api.api.id}"
   depends_on  = ["aws_api_gateway_integration.integration"]
+
+  # FIXME: https://github.com/hashicorp/terraform/issues/6613
+  stage_description = "${md5(file("api_gateway.tf"))}"
 }
 
 output "url" {
