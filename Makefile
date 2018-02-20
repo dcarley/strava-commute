@@ -26,6 +26,20 @@ terraform: default_region
 	cd terraform && terraform apply \
 		-var "strava_api_token=${STRAVA_API_TOKEN}"
 
+.PHONY: register
+register: default_region
+	$(if ${STRAVA_CLIENT_ID},,$(error must set STRAVA_CLIENT_ID))
+	$(if ${STRAVA_CLIENT_SECRET},,$(error must set STRAVA_CLIENT_SECRET))
+	$(eval export URL=$$(shell \
+		cd terraform && AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION} terraform output url \
+	))
+	curl -XPOST \
+		-F "client_id=${STRAVA_CLIENT_ID}" \
+		-F "client_secret=${STRAVA_CLIENT_SECRET}" \
+		-F 'verify_token=STRAVA' \
+		-F "callback_url=${URL}" \
+		https://api.strava.com/api/v3/push_subscriptions
+
 .PHONY: init
 init: default_region
 	$(if ${BUCKET_SUFFIX},,$(error must set BUCKET_SUFFIX))

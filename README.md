@@ -84,4 +84,9 @@ Notes about the format:
 
         make
 
-1. Take the `url` in the output.
+1. Create a push subscription if you're deploying for the first time or the
+   URL has changed:
+
+        make register \
+          STRAVA_CLIENT_ID=<your_client_id> \
+          STRAVA_CLIENT_SECRET=<your_client_secret>
