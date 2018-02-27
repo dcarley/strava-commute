@@ -36,7 +36,7 @@ var _ = Describe("UpdateHandler", func() {
 	const (
 		activityID    = 12312312312
 		eventTemplate = `{
-				"subscription_id": "1",
+				"subscription_id": 1,
 				"owner_id": 13408,
 				"object_id": %d,
 				"object_type": "activity",

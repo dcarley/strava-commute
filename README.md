@@ -14,7 +14,7 @@ differences are that I wanted to try out:
 [Alex Muller's]: http://alex.mullr.net/blog/2017/09/using-lambda-to-do-bits-and-pieces/
 [lambda-strava-commute-namer]: https://github.com/alexmuller/lambda-strava-commute-namer
 [lambda-go]: https://aws.amazon.com/blogs/compute/announcing-go-support-for-aws-lambda/
-[strava-webhook]: http://strava.github.io/api/partner/v3/events/
+[strava-webhook]: https://developers.strava.com/docs/webhooks/#event-data
 
 ## Usage
 

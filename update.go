@@ -15,9 +15,9 @@ const (
 	ConfigFile  = "config.json"
 )
 
-// http://strava.github.io/api/partner/v3/events/#updates
+// https://developers.strava.com/docs/webhooks/#event-data
 type WebhookRequest struct {
-	SubscriptionID string                  `json:"subscription_id"`
+	SubscriptionID int64                   `json:"subscription_id"`
 	OwnerID        int64                   `json:"owner_id"`
 	ObjectID       int64                   `json:"object_id"`
 	ObjectType     string                  `json:"object_type"`
