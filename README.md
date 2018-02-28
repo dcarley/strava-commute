@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/dcarley/strava-commute.svg?style=svg)](https://circleci.com/gh/dcarley/strava-commute)
+
 # strava-commute
 
 A utility that runs on [AWS Lambda][] to rename and tag commute rides on [Strava][].
